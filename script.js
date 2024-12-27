@@ -174,6 +174,7 @@ function processMatches(matches) {
 }
 
 function removeMatches() {
+    // Apply gravity - move tiles down
     for (let col = 0; col < gridSize; col++) {
         let emptyRow = gridSize - 1;
         for (let row = gridSize - 1; row >= 0; row--) {
@@ -187,8 +188,9 @@ function removeMatches() {
         }
     }
 
-    for (let row = 0; row < gridSize; row++) {
-        for (let col = 0; col < gridSize; col++) {
+    // Fill the top empty spaces with new tiles
+    for (let col = 0; col < gridSize; col++) {
+        for (let row = 0; row < gridSize; row++) {
             if (board[row][col] === -1) {
                 board[row][col] = Math.floor(Math.random() * numColors);
             }
