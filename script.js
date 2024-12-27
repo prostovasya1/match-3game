@@ -63,7 +63,7 @@ function swapTiles(row1, col1, row2, col2) {
     board[row1][col1] = board[row2][col2];
     board[row2][col2] = temp;
     drawBoard();
-    handleMatches(); // Check for matches after a swap
+    handleMatches();
 }
 
 function findMatches() {
@@ -83,7 +83,7 @@ function findMatches() {
                     match.push({ row: row, col: col + i });
                 }
                 matches.push(match);
-                col += matchLength - 1; // Skip already matched tiles
+                col += matchLength - 1;
             }
         }
     }
@@ -102,7 +102,7 @@ function findMatches() {
                     match.push({ row: row + i, col: col });
                 }
                 matches.push(match);
-                row += matchLength - 1; // Skip already matched tiles
+                row += matchLength - 1;
             }
         }
     }
@@ -113,27 +113,43 @@ function findMatches() {
 function handleMatches() {
     const matches = findMatches();
     if (matches.length > 0) {
-        // Process the matches
-        matches.forEach(match => {
-            if (match.length === 3) {
-                score += 10; // Reward for exactly 3
-            } else if (match.length > 3) {
-                // Optionally, a different score or no extra score
-                score += 5; // Example: Slightly less reward for > 3
-            }
-            match.forEach(tile => {
-                board[tile.row][tile.col] = -1; // Mark matched tiles for removal
-            });
-        });
-
-        // Remove matched tiles and update the board
-        removeMatches();
-        updateScoreDisplay();
+        // Visual feedback before processing
+        highlightMatches(matches);
+        setTimeout(() => {
+            processMatches(matches);
+        }, 500); // Delay for visual feedback
     }
 }
 
+function highlightMatches(matches) {
+    matches.forEach(match => {
+        match.forEach(tile => {
+            const tileX = tile.col * tileSize;
+            const tileY = tile.row * tileSize;
+            ctx.strokeStyle = 'yellow'; // Highlight color
+            ctx.lineWidth = 5;
+            ctx.strokeRect(tileX + 2, tileY + 2, tileSize - 4, tileSize - 4);
+        });
+    });
+}
+
+function processMatches(matches) {
+    matches.forEach(match => {
+        if (match.length === 3) {
+            score += 10;
+        } else if (match.length > 3) {
+            score += 5;
+        }
+        match.forEach(tile => {
+            board[tile.row][tile.col] = -1;
+        });
+    });
+
+    removeMatches();
+    updateScoreDisplay();
+}
+
 function removeMatches() {
-    // Shift tiles down to fill empty spaces
     for (let col = 0; col < gridSize; col++) {
         let emptyRow = gridSize - 1;
         for (let row = gridSize - 1; row >= 0; row--) {
@@ -147,7 +163,6 @@ function removeMatches() {
         }
     }
 
-    // Fill the top rows with new random tiles
     for (let row = 0; row < gridSize; row++) {
         for (let col = 0; col < gridSize; col++) {
             if (board[row][col] === -1) {
