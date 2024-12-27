@@ -16,9 +16,33 @@ function initBoard() {
     for (let row = 0; row < gridSize; row++) {
         board[row] = [];
         for (let col = 0; col < gridSize; col++) {
-            board[row][col] = Math.floor(Math.random() * numColors);
+            let newColor;
+            do {
+                newColor = Math.floor(Math.random() * numColors);
+                board[row][col] = newColor;
+            } while (hasInitialMatches(row, col));
         }
     }
+}
+
+function hasInitialMatches(currentRow, currentCol) {
+    const currentColor = board[currentRow][currentCol];
+
+    // Check horizontal matches to the left
+    if (currentCol > 1 &&
+        board[currentRow][currentCol - 1] === currentColor &&
+        board[currentRow][currentCol - 2] === currentColor) {
+        return true;
+    }
+
+    // Check vertical matches above
+    if (currentRow > 1 &&
+        board[currentRow - 1][currentCol] === currentColor &&
+        board[currentRow - 2][currentCol] === currentColor) {
+        return true;
+    }
+
+    return false;
 }
 
 function drawBoard() {
